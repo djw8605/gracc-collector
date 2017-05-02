@@ -113,6 +113,10 @@ func (q *Quarantine) ProcessQuarantine(req *Request) (string, error) {
 		
 	}
 	
+	if counter == 0 {
+		return "", NewRecordError("No data received")
+	}
+	
 	hexString := hex.EncodeToString(h.Sum(nil))
 	
 	hashDir := path.Join(q.outputDir, hexString[:2])

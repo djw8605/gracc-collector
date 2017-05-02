@@ -11,13 +11,10 @@ import (
 
 
 func TestQuarantine(m *testing.T) {
-
-	var q *Quarantine
 	
-	if _, err := NewQuarantine("/tmp"); err != nil {
-		fmt.Printf("Error making quarentine: %s\n", err)
+	if q, err := NewQuarantine("/tmp"); err != nil {
+		fmt.Printf("Error making quarantine: %s\n", err)
 	}
-	
 
 	testURL := "http://" + config.Address + ":" + config.Port + "/rmi"
 	v := url.Values{}
@@ -36,6 +33,9 @@ func TestQuarantine(m *testing.T) {
 		r: httpreq,
 	}
 	
-	q.ProcessQuarantine(req)
+	err := q.ProcessQuarantine(req)
+	if err != nil {
+		fmt.Printf("Error processing: %s", err.Message)
+	}
 	
 }
