@@ -6,6 +6,9 @@ import (
 	"net/url"
 	"net/http/httptest"
 	"bytes"
+	"crypto/sha256"
+  "encoding/hex"
+	"path"
 )
 
 
@@ -28,6 +31,11 @@ func TestQuarantine(m *testing.T) {
 	
 	buf := bytes.NewBuffer([]byte(encodedBody))
 	
+	h := sha256.New()
+	h.Write([]byte(testBundle))
+	hexString := hex.EncodeToString(h.Sum(nil))
+	newPath := path.Join("/tmp", hexString[:2], hexString[2:])
+	
 	httpreq := httptest.NewRequest("POST", testURL, buf)
 	
 	req := &Request{
@@ -38,8 +46,12 @@ func TestQuarantine(m *testing.T) {
 	path, err = q.ProcessQuarantine(req)
 	if err != nil {
 		fmt.Printf("Error processing: %s", err)
+		m.Fatalf("Path is not the same as calculated path.  Calculated: %s, returned: %s\n", newPath, path)
 	}
 	
 	fmt.Printf("Path is: %s", path)
+	if path != newPath {
+		m.Fatalf("Path is not the same as calculated path.  Calculated: %s, returned: %s\n", newPath, path)
+	}
 	
 }

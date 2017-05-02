@@ -93,6 +93,12 @@ func (q *Quarantine) ProcessQuarantine(req *Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	// Delete the tmpfile if anything happens
+	defer func() {
+		if exist, _ := exists(tmpfile.Name()); exist {
+			os.Remove(tmpfile.Name())
+		}
+	}()
 
 	buf := make([]byte, 1024)
 	counter := 0
@@ -112,6 +118,7 @@ func (q *Quarantine) ProcessQuarantine(req *Request) (string, error) {
 		counter += n
 		
 	}
+	tmpfile.Close()
 	
 	if counter == 0 {
 		return "", NewRecordError("No data received")
@@ -132,8 +139,7 @@ func (q *Quarantine) ProcessQuarantine(req *Request) (string, error) {
 		return newPath, err
 	}
 	
-	// Atomic mv to the new file
-	tmpfile.Close()
+	// Atomic rename to the new file
 	os.Rename(tmpfile.Name(), newPath)
 	
 	q.bytesMux.Lock()
