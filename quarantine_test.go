@@ -6,9 +6,6 @@ import (
 	"net/url"
 	"net/http/httptest"
 	"bytes"
-	"crypto/sha256"
-  "encoding/hex"
-	"path"
 )
 
 
