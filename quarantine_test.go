@@ -31,8 +31,6 @@ func TestQuarantine(m *testing.T) {
 	
 	buf := bytes.NewBuffer([]byte(encodedBody))
 	
-	m.Logf("Encoded body is: %s", encodedBody)
-	
 	h := sha256.New()
 	h.Write([]byte(testBundle))
 	hexString := hex.EncodeToString(h.Sum(nil))
@@ -48,7 +46,7 @@ func TestQuarantine(m *testing.T) {
 	path, err = q.ProcessQuarantine(req)
 	if err != nil {
 		fmt.Printf("Error processing: %s", err)
-		m.Fatalf("Path is not the same as calculated path.  Calculated: %s, returned: %s\n", newPath, path)
+		m.Fatalf("Error in ProcessQuarantine: %s", err)
 	}
 	
 	fmt.Printf("Path is: %s", path)
