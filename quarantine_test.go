@@ -12,7 +12,8 @@ import (
 
 func TestQuarantine(m *testing.T) {
 	
-	if q, err := NewQuarantine("/tmp"); err != nil {
+	q, err := NewQuarantine("/tmp")
+	if err != nil {
 		fmt.Printf("Error making quarantine: %s\n", err)
 	}
 
@@ -33,9 +34,12 @@ func TestQuarantine(m *testing.T) {
 		r: httpreq,
 	}
 	
-	err := q.ProcessQuarantine(req)
+	var path string
+	path, err = q.ProcessQuarantine(req)
 	if err != nil {
-		fmt.Printf("Error processing: %s", err.Message)
+		fmt.Printf("Error processing: %s", err)
 	}
+	
+	fmt.Printf("Path is: %s", path)
 	
 }
