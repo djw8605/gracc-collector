@@ -31,6 +31,8 @@ func TestQuarantine(m *testing.T) {
 	
 	buf := bytes.NewBuffer([]byte(encodedBody))
 	
+	m.Logf("Encoded body is: %s", encodedBody)
+	
 	h := sha256.New()
 	h.Write([]byte(testBundle))
 	hexString := hex.EncodeToString(h.Sum(nil))
