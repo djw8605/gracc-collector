@@ -31,10 +31,12 @@ func TestQuarantine(m *testing.T) {
 	
 	buf := bytes.NewBuffer([]byte(encodedBody))
 	
+	/* 
 	h := sha256.New()
 	h.Write([]byte(testBundle))
 	hexString := hex.EncodeToString(h.Sum(nil))
 	newPath := path.Join("/tmp", hexString[:2], hexString[2:])
+	*/
 	
 	httpreq := httptest.NewRequest("POST", testURL, buf)
 	
@@ -42,16 +44,29 @@ func TestQuarantine(m *testing.T) {
 		r: httpreq,
 	}
 	
-	var path string
-	path, err = q.ProcessQuarantine(req)
+	var path1 string
+	path1, err = q.ProcessQuarantine(req)
 	if err != nil {
 		fmt.Printf("Error processing: %s", err)
 		m.Fatalf("Error in ProcessQuarantine: %s", err)
 	}
 	
-	fmt.Printf("Path is: %s", path)
-	if path != newPath {
-		m.Fatalf("Path is not the same as calculated path.  Calculated: %s, returned: %s\n", newPath, path)
+	buf = bytes.NewBuffer([]byte(encodedBody))
+	httpreq = httptest.NewRequest("POST", testURL, buf)
+	req = &Request{
+		r: httpreq,
+	}
+	var path2 string
+	path2, err = q.ProcessQuarantine(req)
+	if err != nil {
+		fmt.Printf("Error processing: %s", err)
+		m.Fatalf("Error in ProcessQuarantine: %s", err)
+	}
+
+	
+	fmt.Printf("Path1 is: %s, path2 is: %s", path1, path2)
+	if path1 != path2 {
+		m.Fatalf("Same body isn't the same path, Path1 = %s, Path2 = %s\n", path1, path2)
 	}
 	
 }
